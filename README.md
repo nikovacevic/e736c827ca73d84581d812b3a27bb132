@@ -27,3 +27,9 @@ Answer should be posted in a git repo.
   * Small, single-color image
   * Large, tri-color-image
   * Invalid URL
+  * Images with only two or fewer pixels
+
+## Resources
+
+* https://golang.org/pkg/image/
+* https://blog.golang.org/go-image-package
