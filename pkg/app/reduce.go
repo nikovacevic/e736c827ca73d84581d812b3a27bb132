@@ -7,15 +7,19 @@ import (
 )
 
 // Reduce ...TODO
-func Reduce(in <-chan Image, out chan<- string, fn func(Image) string, wg *sync.WaitGroup) {
+func Reduce(in <-chan Image, out chan<- string, fn func(Image) (string, error), wg *sync.WaitGroup) {
 	defer wg.Done()
 	for img := range in {
-		out <- fn(img)
+		str, err := fn(img)
+		if err != nil {
+			// TODO error handling
+		}
+		out <- str
 	}
 }
 
 // CountHexValues ...TODO
-func CountHexValues(img Image) string {
+func CountHexValues(img Image) (string, error) {
 	// Count hex values
 	Counter := NewCounter()
 
@@ -40,5 +44,8 @@ func CountHexValues(img Image) string {
 		}
 	}
 
-	return img.URL + "," + strings.Join(Counter.Top(3), ",")
+	// Formatted for CSV: url,hex,hex,hex
+	str := img.URL + "," + strings.Join(Counter.Top(3), ",")
+
+	return str, nil
 }

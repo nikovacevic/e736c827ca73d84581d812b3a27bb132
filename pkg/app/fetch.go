@@ -14,8 +14,8 @@ func Fetch(in <-chan string, out chan<- Image, wg *sync.WaitGroup) {
 		// GET resource at given URL
 		res, err := http.Get(u)
 		if err != nil {
+			// TODO error handling
 			// TODO replace this with better tracing
-			log.Println(err)
 			continue
 		}
 		defer res.Body.Close()

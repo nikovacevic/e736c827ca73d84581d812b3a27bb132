@@ -48,6 +48,11 @@ type HexPair struct {
 // ByCount implements sort.Interface for HexPairs based on HexPair.Count
 type ByCount []HexPair
 
-func (hps ByCount) Len() int           { return len(hps) }
-func (hps ByCount) Swap(i, j int)      { hps[i], hps[j] = hps[j], hps[i] }
-func (hps ByCount) Less(i, j int) bool { return hps[i].Count < hps[j].Count }
+func (hps ByCount) Len() int      { return len(hps) }
+func (hps ByCount) Swap(i, j int) { hps[i], hps[j] = hps[j], hps[i] }
+func (hps ByCount) Less(i, j int) bool {
+	if hps[i].Count == hps[j].Count {
+		return hps[i].Hex < hps[j].Hex
+	}
+	return hps[i].Count < hps[j].Count
+}
