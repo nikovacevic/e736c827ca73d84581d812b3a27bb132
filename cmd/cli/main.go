@@ -21,16 +21,25 @@ const FetchWorkers = 25
 const ReduceWorkers = 10
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("Please provide a file path")
+	if len(os.Args) < 3 {
+		log.Fatal("Please provide two file paths: one for reading and one for writing")
 	}
 
-	path := os.Args[1]
-	file, err := os.Open(path)
+	// Open read-file
+	inPath := os.Args[1]
+	inFile, err := os.Open(inPath)
 	if err != nil {
-		log.Fatal("Failed to open file")
+		log.Fatal("Failed to open read file")
 	}
-	defer file.Close()
+	defer inFile.Close()
+
+	// Open write-file
+	outPath := os.Args[2]
+	outFile, err := os.Create(outPath)
+	if err != nil {
+		log.Fatal("Failed to open write file")
+	}
+	defer outFile.Close()
 
 	// Set up concurrent pipeline so that down-stream processes are not
 	// blocked by expensive up-stream processes (e.g. fetching a file should
@@ -70,7 +79,7 @@ func main() {
 	}
 
 	// Set up write worker
-	go app.Write(writeCh, resultCh)
+	go app.Write(writeCh, resultCh, outFile)
 
 	// Set up result logger
 	go app.LogResults(resultCh, doneCh)
@@ -78,7 +87,7 @@ func main() {
 	start := time.Now()
 
 	// Read all URLs from file, then tear-down close fetch input
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(inFile)
 	for scanner.Scan() {
 		fetchCh <- scanner.Text()
 	}
