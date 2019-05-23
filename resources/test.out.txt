@@ -1,0 +1,3 @@
+http://i.imgur.com/TKLs9lo.jpg,#ffffff,#fefefe,#f7f7f7
+http://i.imgur.com/FApqk3D.jpg,#ffffff,#000000,#f3c300
+https://i.redd.it/d8021b5i2moy.jpg,#ffffff,#010304,#020405
