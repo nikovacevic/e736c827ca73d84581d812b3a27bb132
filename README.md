@@ -5,6 +5,16 @@ Run the program by providing an input file path and an output file path:
 ./hexcount resources/input.txt resources/output.csv
 ```
 
+Run tests from `pkg/app`:
+```
+$cd pkg/app
+$go test
+PASS
+ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app 0.016s
+```
+
+The `gen` command was used to generate images for testing.
+
 ## Prompt
 
 Bellow is a list of links leading to an image, read this list of images and find 3 most prevalent colors in the RGB scheme in hexadecimal format (#000000 - #FFFFFF) in each image, and write the result into a CSV file in a form of url,color,color,color.
@@ -33,10 +43,6 @@ Answer should be posted in a git repo.
   * Large, tri-color-image
   * Invalid URL
   * Images with only two or fewer pixels
-
-## Improvements
-
-
 
 ## Resources
 

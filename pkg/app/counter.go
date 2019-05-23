@@ -1,6 +1,8 @@
 package app
 
-import "sort"
+import (
+	"sort"
+)
 
 // Counter counts the frequency of string values.
 // Note: do not track top values continuously. Expected case, that would result
@@ -36,7 +38,12 @@ func (hc *Counter) Top(n int) []string {
 	for _, hp := range pairs {
 		strs = append(strs, hp.Hex)
 	}
-	return strs[0:n]
+	// Ending index should be bounded by length of srts
+	e := len(strs)
+	if n <= e {
+		e = n
+	}
+	return strs[0:e]
 }
 
 // HexPair represents a string and its frequency
