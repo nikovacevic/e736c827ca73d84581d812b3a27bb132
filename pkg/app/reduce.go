@@ -6,19 +6,28 @@ import (
 	"sync"
 )
 
-// Reduce ...TODO
-func Reduce(in <-chan Image, out chan<- string, fn func(Image) (string, error), wg *sync.WaitGroup) {
+// ReduceFn defines a reduction of an Image to a string
+type ReduceFn func(Image) (string, error)
+
+// Reduce ranges over the input channel of Images, reducing them to a string
+// by a ReduceFn, then sends the output on the out channel. Errors are
+// sent to the error channel. Calling Done on the given wait group allows
+// all workers in the worker group to complete before closing channels.
+func Reduce(in <-chan Image, out chan<- string, fn ReduceFn, wg *sync.WaitGroup, errorCh chan<- error) {
 	defer wg.Done()
 	for img := range in {
 		str, err := fn(img)
 		if err != nil {
-			// TODO error handling
+			errorCh <- fmt.Errorf("error reducing image: %v", err)
+			continue
 		}
 		out <- str
 	}
 }
 
-// CountHexValues ...TODO
+// CountHexValues counts the frequency of simple (non-alpha-premultiplied) hex
+// values in an image and returns a comma-separated row consisting of:
+// "url,hex,hex,hex" for the top three hex values in the image.
 func CountHexValues(img Image) (string, error) {
 	// Count hex values
 	Counter := NewCounter()

@@ -2,24 +2,24 @@ package app
 
 import "sort"
 
-// Counter ...TODO
-// Note: Do not track top values. Expected case, that would be worse runtime
-// than O(N*T) runtime of on-demand solution.
+// Counter counts the frequency of string values.
+// Note: do not track top values continuously. Expected case, that would result
+// in worse runtime than O(N*T) runtime of the on-demand solution.
 type Counter struct {
 	Values map[string]uint32
 }
 
-// NewCounter ...TODO
+// NewCounter returns a pointer to a new Counter instance
 func NewCounter() *Counter {
 	return &Counter{Values: map[string]uint32{}}
 }
 
-// Count ...TODO
+// Count adds to the frequency of the given hex value
 func (hc *Counter) Count(hex string) {
 	hc.Values[hex] = hc.Values[hex] + 1
 }
 
-// Slice ...TODO
+// Slice converts a Counter into a slice of (string, count) pairs
 func (hc *Counter) Slice() []HexPair {
 	hps := []HexPair{}
 	for hex, count := range hc.Values {
@@ -28,7 +28,7 @@ func (hc *Counter) Slice() []HexPair {
 	return hps
 }
 
-// Top ...TODO
+// Top returns the n most frequent string values, sorted by frequency
 func (hc *Counter) Top(n int) []string {
 	pairs := hc.Slice()
 	sort.Sort(sort.Reverse(ByCount(pairs)))
@@ -39,7 +39,7 @@ func (hc *Counter) Top(n int) []string {
 	return strs[0:n]
 }
 
-// HexPair ...TODO
+// HexPair represents a string and its frequency
 type HexPair struct {
 	Hex   string
 	Count uint32

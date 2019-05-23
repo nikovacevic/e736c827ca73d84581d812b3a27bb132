@@ -41,6 +41,13 @@ func main() {
 	}
 	defer outFile.Close()
 
+	// Open error-file
+	errFile, err := os.Create("resources/error.log")
+	if err != nil {
+		log.Fatal("Failed to open error file")
+	}
+	defer errFile.Close()
+
 	// Set up concurrent pipeline so that down-stream processes are not
 	// blocked by expensive up-stream processes (e.g. fetching a file should
 	// not block reducing and writing the previous file) and so that a
@@ -57,17 +64,21 @@ func main() {
 	// 5. Log results (1 worker)
 	//    | | doneCh (signals completion)
 
+	// data channels
 	fetchCh := make(chan string)
 	reduceCh := make(chan app.Image)
 	writeCh := make(chan string)
-	resultCh := make(chan string)
+	// logging channels
+	resultCh := make(chan string, 100)
+	errorCh := make(chan error, 100)
+	// channel to flag completion
 	doneCh := make(chan bool)
 
 	// Set up fetch worker pool
 	var readWG sync.WaitGroup
 	for w := 0; w < FetchWorkers; w++ {
 		readWG.Add(1)
-		go app.Fetch(fetchCh, reduceCh, &readWG)
+		go app.Fetch(fetchCh, reduceCh, &readWG, errorCh)
 	}
 
 	// Set up reduce worker pool
@@ -75,14 +86,15 @@ func main() {
 	for w := 0; w < ReduceWorkers; w++ {
 		reduceWG.Add(1)
 		// Count frequency of hex values as the reduce action
-		go app.Reduce(reduceCh, writeCh, app.CountHexValues, &reduceWG)
+		go app.Reduce(reduceCh, writeCh, app.CountHexValues, &reduceWG, errorCh)
 	}
 
 	// Set up write worker
-	go app.Write(writeCh, resultCh, outFile)
+	go app.Write(writeCh, resultCh, outFile, errorCh)
 
-	// Set up result logger
+	// Set up logging
 	go app.LogResults(resultCh, doneCh)
+	go app.LogErrors(errorCh, errFile)
 
 	start := time.Now()
 
