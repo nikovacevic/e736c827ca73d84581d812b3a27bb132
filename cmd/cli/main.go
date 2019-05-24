@@ -75,10 +75,10 @@ func main() {
 	doneCh := make(chan bool)
 
 	// Set up fetch worker pool
-	var readWG sync.WaitGroup
+	var fetchWG sync.WaitGroup
 	for w := 0; w < FetchWorkers; w++ {
-		readWG.Add(1)
-		go app.Fetch(fetchCh, reduceCh, &readWG, errorCh)
+		fetchWG.Add(1)
+		go app.Fetch(fetchCh, reduceCh, &fetchWG, errorCh)
 	}
 
 	// Set up reduce worker pool
@@ -106,7 +106,7 @@ func main() {
 	close(fetchCh)
 
 	// Close reduce input after read workers finish
-	readWG.Wait()
+	fetchWG.Wait()
 	close(reduceCh)
 
 	// Close write input after reduce workers finish

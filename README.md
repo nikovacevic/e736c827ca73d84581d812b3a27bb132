@@ -10,7 +10,7 @@ Run tests from `pkg/app`:
 $cd pkg/app
 $go test
 PASS
-ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app 0.016s
+ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app 1.504s
 ```
 
 The `gen` command was used to generate images for testing.
