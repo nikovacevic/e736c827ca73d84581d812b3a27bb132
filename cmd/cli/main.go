@@ -7,10 +7,6 @@ import (
 	"sync"
 	"time"
 
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
-
 	"github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app"
 )
 
@@ -25,8 +21,18 @@ func main() {
 		log.Fatal("Please provide two file paths: one for reading and one for writing")
 	}
 
-	// Open read-file
 	inPath := os.Args[1]
+	outPath := os.Args[2]
+	errPath := "resources/error.log"
+	if len(os.Args) == 4 {
+		errPath = os.Args[3]
+	}
+
+	run(inPath, outPath, errPath)
+}
+
+func run(inPath, outPath, errPath string) {
+	// Open read-file
 	inFile, err := os.Open(inPath)
 	if err != nil {
 		log.Fatal("Failed to open read file")
@@ -34,7 +40,6 @@ func main() {
 	defer inFile.Close()
 
 	// Open write-file
-	outPath := os.Args[2]
 	outFile, err := os.Create(outPath)
 	if err != nil {
 		log.Fatal("Failed to open write file")
@@ -42,7 +47,7 @@ func main() {
 	defer outFile.Close()
 
 	// Open error-file
-	errFile, err := os.Create("resources/error.log")
+	errFile, err := os.Create(errPath)
 	if err != nil {
 		log.Fatal("Failed to open error file")
 	}

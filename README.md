@@ -5,12 +5,25 @@ Run the program by providing an input file path and an output file path:
 ./hexcount resources/input.txt resources/output.csv
 ```
 
-Run tests from `pkg/app`:
+Run unit tests from `pkg/app`:
 ```
 $cd pkg/app
 $go test
 PASS
 ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app 1.504s
+```
+
+Run integration test from `cmd/cli`:
+```
+$cd cli/cmd
+cli $go test
+2019/05/23 18:41:16 http://i.imgur.com/TKLs9lo.jpg,#ffffff,#fefefe,#f7f7f7
+2019/05/23 18:41:16 invalid resource at https://nikovacevic.io/img/123: 404
+2019/05/23 18:41:17 http://i.imgur.com/FApqk3D.jpg,#ffffff,#000000,#f3c300
+2019/05/23 18:41:19 https://i.redd.it/d8021b5i2moy.jpg,#ffffff,#010304,#020405
+2019/05/23 18:41:19 Finished in 2.992322629s
+PASS
+ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/cmd/cli 3.023s
 ```
 
 The `gen` command was used to generate images for testing.

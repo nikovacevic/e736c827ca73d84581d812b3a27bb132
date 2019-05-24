@@ -6,6 +6,11 @@ import (
 	"log"
 	"net/http"
 	"sync"
+
+	// Support all image decoder/encoders
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 )
 
 // Fetch ranges over the input channel of URLs, attempting to fetch them over
