@@ -11,7 +11,10 @@ import (
 )
 
 // FetchWorkers determines the size of the worker pool fetching URLs
-const FetchWorkers = 25
+const FetchWorkers = 10
+
+// DecodeWorkers determines the size of the worker pool decoding URLs
+const DecodeWorkers = 10
 
 // ReduceWorkers determines the size of the worker pool reducing Images
 const ReduceWorkers = 10
@@ -61,18 +64,21 @@ func run(inPath, outPath, errPath string) {
 	// 1. Read filename (1 worker)
 	//    | | fetchCh
 	// 2. Fetch filename (many workers)
+	//    | | decodeCh
+	// 3. Decode image (many workers)
 	//    | | reduceCh
-	// 3. Reduce image (many workers)
+	// 4. Reduce image (many workers)
 	//    | | writeCh
-	// 4. Write to CSV (1 worker)
+	// 5. Write to CSV (1 worker)
 	//    | | resultCh
-	// 5. Log results (1 worker)
+	// 6. Log results (1 worker)
 	//    | | doneCh (signals completion)
 
 	// data channels
-	fetchCh := make(chan string)
-	reduceCh := make(chan app.Image)
-	writeCh := make(chan string)
+	fetchCh := make(chan string, 100)
+	decodeCh := make(chan app.Resource, 100)
+	reduceCh := make(chan app.Image, 100)
+	writeCh := make(chan string, 100)
 	// logging channels
 	resultCh := make(chan string, 100)
 	errorCh := make(chan error, 100)
@@ -83,7 +89,14 @@ func run(inPath, outPath, errPath string) {
 	var fetchWG sync.WaitGroup
 	for w := 0; w < FetchWorkers; w++ {
 		fetchWG.Add(1)
-		go app.Fetch(fetchCh, reduceCh, &fetchWG, errorCh)
+		go app.Fetch(fetchCh, decodeCh, &fetchWG, errorCh)
+	}
+
+	// Set up decode worker pool
+	var decodeWG sync.WaitGroup
+	for w := 0; w < DecodeWorkers; w++ {
+		decodeWG.Add(1)
+		go app.Decode(decodeCh, reduceCh, &decodeWG, errorCh)
 	}
 
 	// Set up reduce worker pool
@@ -112,6 +125,10 @@ func run(inPath, outPath, errPath string) {
 
 	// Close reduce input after read workers finish
 	fetchWG.Wait()
+	close(decodeCh)
+
+	// Close reduce input after read workers finish
+	decodeWG.Wait()
 	close(reduceCh)
 
 	// Close write input after reduce workers finish
