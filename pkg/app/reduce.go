@@ -13,7 +13,7 @@ type ReduceFn func(Image) (string, error)
 // by a ReduceFn, then sends the output on the out channel. Errors are
 // sent to the error channel. Calling Done on the given wait group allows
 // all workers in the worker group to complete before closing channels.
-func Reduce(in <-chan Image, out chan<- string, fn ReduceFn, wg *sync.WaitGroup, errorCh chan<- error) {
+func Reduce(in <-chan Image, out chan<- string, fn ReduceFn, errorCh chan<- error, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for img := range in {
 		str, err := fn(img)

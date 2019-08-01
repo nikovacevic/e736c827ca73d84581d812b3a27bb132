@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app"
+	"github.com/nikovacevic/image-reducer/pkg/app"
 )
 
 // FetchWorkers determines the size of the worker pool fetching URLs
@@ -89,14 +89,14 @@ func run(inPath, outPath, errPath string) {
 	var fetchWG sync.WaitGroup
 	for w := 0; w < FetchWorkers; w++ {
 		fetchWG.Add(1)
-		go app.Fetch(fetchCh, decodeCh, &fetchWG, errorCh)
+		go app.Fetch(fetchCh, decodeCh, errorCh, &fetchWG)
 	}
 
 	// Set up decode worker pool
 	var decodeWG sync.WaitGroup
 	for w := 0; w < DecodeWorkers; w++ {
 		decodeWG.Add(1)
-		go app.Decode(decodeCh, reduceCh, &decodeWG, errorCh)
+		go app.Decode(decodeCh, reduceCh, errorCh, &decodeWG)
 	}
 
 	// Set up reduce worker pool
@@ -104,7 +104,7 @@ func run(inPath, outPath, errPath string) {
 	for w := 0; w < ReduceWorkers; w++ {
 		reduceWG.Add(1)
 		// Count frequency of hex values as the reduce action
-		go app.Reduce(reduceCh, writeCh, app.CountHexValues, &reduceWG, errorCh)
+		go app.Reduce(reduceCh, writeCh, app.CountHexValues, errorCh, &reduceWG)
 	}
 
 	// Set up write worker

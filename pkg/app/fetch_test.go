@@ -12,7 +12,7 @@ func TestFetch(t *testing.T) {
 	errorCh := make(chan error)
 	var wg sync.WaitGroup
 
-	go Fetch(inCh, outCh, &wg, errorCh)
+	go Fetch(inCh, outCh, errorCh, &wg)
 
 	var resource Resource
 	var err error

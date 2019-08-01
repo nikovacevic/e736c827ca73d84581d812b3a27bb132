@@ -15,7 +15,7 @@ import (
 // HTTP, and sends the fetched image out over the out channel. Errors are
 // sent to the error channel. Calling Done on the given wait group allows
 // all workers in the worker group to complete before closing channels.
-func Fetch(in <-chan string, out chan<- Resource, wg *sync.WaitGroup, errorCh chan<- error) {
+func Fetch(in <-chan string, out chan<- Resource, errorCh chan<- error, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for u := range in {
 		// GET resource at given URL

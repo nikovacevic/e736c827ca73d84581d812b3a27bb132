@@ -14,7 +14,7 @@ import (
 // to the output channel, and closes the body. Errors are sent to the error
 // channel. Calling Done on the given wait group allows all workers in the
 // worker group to complete before closing channels.
-func Decode(in <-chan Resource, out chan<- Image, wg *sync.WaitGroup, errorCh chan<- error) {
+func Decode(in <-chan Resource, out chan<- Image, errorCh chan<- error, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for resource := range in {
 		defer resource.Body.Close()

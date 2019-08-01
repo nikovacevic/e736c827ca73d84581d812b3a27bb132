@@ -10,7 +10,7 @@ Run unit tests from `pkg/app`:
 $cd pkg/app
 $go test
 PASS
-ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/pkg/app 1.504s
+ok      github.com/nikovacevic/image-reducer/pkg/app 1.504s
 ```
 
 Run integration test from `cmd/cli`:
@@ -23,7 +23,7 @@ cli $go test
 2019/05/23 18:41:19 https://i.redd.it/d8021b5i2moy.jpg,#ffffff,#010304,#020405
 2019/05/23 18:41:19 Finished in 2.992322629s
 PASS
-ok      github.com/nikovacevic/e736c827ca73d84581d812b3a27bb132/cmd/cli 3.023s
+ok      github.com/nikovacevic/image-reducer/cmd/cli 3.023s
 ```
 
 The `gen` command was used to generate images for testing.
